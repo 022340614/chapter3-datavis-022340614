@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3章 数据可视化示例 - 022340614</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .chart-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 200px;
+            }
+            
+            .chart-wrapper {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第3章 数据可视化示例</h1>
+            <p>基于Matplotlib的数据可视化技术展示 - 学号: 022340614</p>
+        </header>
+        
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showChart('sin-cos')">正弦余弦曲线</button>
+            <button class="tab-btn" onclick="showChart('film-rank')">电影票房排行</button>
+            <button class="tab-btn" onclick="showChart('alipay-bill')">支付宝账单</button>
+            <button class="tab-btn" onclick="showChart('car-speed')">汽车制动距离</button>
+            <button class="tab-btn" onclick="showChart('english-score')">英语成绩评估</button>
+            <button class="tab-btn" onclick="showChart('alibaba-gmv')">阿里GMV数据</button>
+            <button class="tab-btn" onclick="showChart('bread-ingredient')">面包配料比例</button>
+        </nav>
+        
+        <!-- 正弦余弦曲线 -->
+        <div id="sin-cos" class="chart-container active">
+            <h2 class="chart-title">正弦曲线和余弦曲线</h2>
+            <div class="chart-wrapper">
+                <canvas id="sinCosChart"></canvas>
+            </div>
+            <div class="description">
+                <p>展示正弦函数和余弦函数在区间[-π, π]上的图像，包含坐标轴标签、刻度、标题、图例、网格线、参考线和注释等完整元素。</p>
+            </div>
+        </div>
+        
+        <!-- 电影票房排行 -->
+        <div id="film-rank" class="chart-container">
+            <h2 class="chart-title">2019年内地电影票房排行榜</h2>
+            <div class="chart-wrapper">
+                <canvas id="filmRankChart"></canvas>
+            </div>
+            <div class="description">
+                <p>水平条形图展示2019年内地电影票房前15名的电影及其票房数据，单位：亿元。</p>
+            </div>
+        </div>
+        
+        <!-- 支付宝账单 -->
+        <div id="alipay-bill" class="chart-container">
+            <h2 class="chart-title">支付宝月账单报告</h2>
+            <div class="chart-wrapper">
+                <canvas id="alipayBillChart"></canvas>
+            </div>
+            <div class="description">
+                <p>饼图展示支付宝月账单中各类消费的比例分布，包含购物、人情往来、餐饮美食等8个类别。</p>
+            </div>
+        </div>
+        
+        <!-- 汽车制动距离 -->
+        <div id="car-speed" class="chart-container">
+            <h2 class="chart-title">汽车速度与制动距离的关系</h2>
+            <div class="chart-wrapper">
+                <canvas id="carSpeedChart"></canvas>
+            </div>
+            <div class="description">
+                <p>散点图展示汽车在不同速度下的制动距离关系，包含网格线辅助观察数据趋势。</p>
+            </div>
+        </div>
+        
+        <!-- 英语成绩评估 -->
+        <div id="english-score" class="chart-container">
+            <h2 class="chart-title">高二年级各班男女生英语成绩评估</h2>
+            <div class="chart-wrapper">
+                <canvas id="englishScoreChart"></canvas>
+            </div>
+            <div class="description">
+                <p>分组柱状图展示高二6个班级男女生英语平均成绩对比，包含全体平均成绩参考线。</p>
+            </div>
+        </div>
+        
+        <!-- 阿里GMV数据 -->
+        <div id="alibaba-gmv" class="chart-container">
+            <h2 class="chart-title">2013-2019财年阿里巴巴淘宝和天猫平台GMV</h2>
+            <div class="chart-wrapper">
+                <canvas id="alibabaGmvChart"></canvas>
+            </div>
+            <div class="description">
+                <p>柱状图展示阿里巴巴2013-2019财年淘宝和天猫平台的GMV（商品交易总额）增长趋势，单位：亿元。</p>
+            </div>
+        </div>
+        
+        <!-- 面包配料比例 -->
+        <div id="bread-ingredient" class="chart-container">
+            <h2 class="chart-title">果酱面包配料比例</h2>
+            <div class="chart-wrapper">
+                <canvas id="breadIngredientChart"></canvas>
+            </div>
+            <div class="description">
+                <p>饼图展示果酱面包的各种配料比例，包含面粉、全麦粉、酵母、苹果酱等8种原料。</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>数据可视化课程项目 - 第3章示例展示 © 2025</p>
+    </footer>
+
+    <script src="charts.js"></script>
+    <script>
+        function showChart(chartId) {
+            // 隐藏所有图表容器
+            document.querySelectorAll('.chart-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // 移除所有按钮的active类
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示选中的图表容器
+            document.getElementById(chartId).classList.add('active');
+            
+            // 为当前按钮添加active类
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
